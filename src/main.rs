@@ -1,13 +1,9 @@
-mod game;
-mod object;
-use game::Game;
-use game::Level;
-use game::Player;
+use better_game::*;
+use game::{Game, Level, Player};
 
 fn main() {
-    /* let levels: Vec<&Level> = Vec::new();
-    let player = Player::new(levels[0]);
-    let game = Game::new(player, levels);
-
-    game.run(); */
+    let player = Player::new();
+    let level = Level::new();
+    let mut game = Game::new(player, level);
+    better_game::run(&mut game);
 }

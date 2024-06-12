@@ -1,15 +1,28 @@
-mod game;
+pub mod game;
 
 use game::Action;
 use game::Game;
+use game::State;
 
 pub fn run(game: &mut Game) {
     loop {
         let state = game.get_state();
-        let input = get_user_input();
-        game.handle(input.0, input.1).expect("For now, lets assume that it works")
+        match state {
+            State::Lost(score) => (),
+            State::Won(score) => (),
+            State::InProgress(location, health) => {
+                location.draw();
+                draw_input_hint();
+                let input = get_user_input();
+                location
+                    .handle(input.0, input.1)
+                    .expect("For now, lets assume that it works")
+            }
+        }
     }
 }
+
+pub fn draw_input_hint() {}
 
 pub fn get_user_input() -> (i32, Action) {
     let mut input = String::new();

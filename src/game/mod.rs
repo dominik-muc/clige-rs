@@ -1,6 +1,6 @@
 mod player;
 
-use std::ops::DerefMut;
+use std::{ops::DerefMut, rc::Rc};
 
 pub use player::Player;
 mod level;
@@ -13,9 +13,9 @@ mod object;
 mod utils;
 
 use object::Object;
-pub struct Game<'a> {
-    player: Player<'a>,
-    levels: Vec<&'a Level<'a>>,
+pub struct Game {
+    player: Player,
+    level: Box<Level>,
 }
 
 #[derive(PartialEq, Debug)]
@@ -23,13 +23,21 @@ pub enum Action {
     Attack,
 }
 
-impl<'a> Game<'a> {
-    pub fn new(player: Player<'a>, levels: Vec<&'a Level>) -> Self {
-        Self { player, levels }
-    }
-    pub fn get_state(&mut self) {}
+pub enum State<'a> {
+    Lost(i32),
+    Won(i32),
+    InProgress(&'a mut Level, u32),
+}
 
-    pub fn handle(&mut self, target: i32, action: Action) -> Result<(), ()> {
+impl Game {
+    pub fn new(player: Player, level: Box<Level>) -> Self {
+        Self { player, level }
+    }
+    pub fn get_state(&mut self) -> State {
+        State::InProgress(&mut self.level, self.player.get_health())
+    }
+
+    /* pub fn handle(&mut self, target: i32, action: Action) -> Result<(), ()> {
         let level = self.player.get_location();
         let mut contents = level.get_contents();
         let object = match contents.get_mut(target as usize) {
@@ -37,5 +45,5 @@ impl<'a> Game<'a> {
             None => return Err(()),
         };
         object.handle(action)
-    }
+    } */
 }

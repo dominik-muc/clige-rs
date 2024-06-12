@@ -1,20 +1,20 @@
+use std::borrow::BorrowMut;
+
 use super::Level;
 
-pub struct Player<'a> {
-    location: &'a Level<'a>,
+pub struct Player {
     health: u32,
     score: u32,
 }
 
-impl<'a> Player<'a> {
-    pub fn new(location: &'a Level) -> Self {
+impl Player {
+    pub fn new() -> Self {
         Self {
-            location,
             health: 100,
             score: 0,
         }
     }
-    pub fn get_location(&self) -> &Level {
-        self.location
+    pub fn get_health(&self) -> u32 {
+        self.health
     }
 }
