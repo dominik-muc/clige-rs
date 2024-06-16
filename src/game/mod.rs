@@ -1,49 +1,51 @@
 mod player;
 
-use std::{ops::DerefMut, rc::Rc};
-
 pub use player::Player;
 mod level;
-
 pub use level::Level;
 
-use crate::game::utils::get_integer;
+pub mod object;
+pub use object::*;
 
-mod object;
-mod utils;
+/// Possible states of the game.
+pub enum State<'a> {
+    Lost(u32),
+    Won(u32),
+    InProgress(&'a mut Level, &'a mut Player),
+}
 
-use object::Object;
+/// Struct `Game` is responsible for keeping track of the game state.
+///
+/// It holds reference to the player and the level he's in.
 pub struct Game {
     player: Player,
     level: Box<Level>,
-}
-
-#[derive(PartialEq, Debug)]
-pub enum Action {
-    Attack,
-}
-
-pub enum State<'a> {
-    Lost(i32),
-    Won(i32),
-    InProgress(&'a mut Level, u32),
+    score: u32,
 }
 
 impl Game {
     pub fn new(player: Player, level: Box<Level>) -> Self {
-        Self { player, level }
-    }
-    pub fn get_state(&mut self) -> State {
-        State::InProgress(&mut self.level, self.player.get_health())
+        Self {
+            player,
+            level,
+            score: 0,
+        }
     }
 
-    /* pub fn handle(&mut self, target: i32, action: Action) -> Result<(), ()> {
-        let level = self.player.get_location();
-        let mut contents = level.get_contents();
-        let object = match contents.get_mut(target as usize) {
-            Some(o) => o,
-            None => return Err(()),
-        };
-        object.handle(action)
-    } */
+    /// Returns the state of the game, depending wheter player is still alive or not.
+    pub fn get_state(&mut self) -> State {
+        // The player cannot win.
+
+        if !self.player.is_alive() {
+            return State::Lost(self.score);
+        }
+
+        State::InProgress(&mut self.level, &mut self.player)
+    }
+}
+
+/// Trait representing a container, that in some way contains `Objects`.
+pub trait Container<T> {
+    /// Add a new object to the container.
+    fn add_child(&mut self, object: Box<T>);
 }
