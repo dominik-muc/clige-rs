@@ -1,35 +1,16 @@
+///! Exports modules and adds useful utilities
+
+pub mod error;
 pub mod game;
-pub mod generator;
 
-use game::Action;
-use game::Game;
-use game::State;
+pub use error::*;
+pub use game::*;
 
-/// Runs the game loop.
-pub fn run(game: &mut Game) {
-    loop {
-        let state = game.get_state();
-        match state {
-            State::Lost(score) => lose_screen(score),
-            State::Won(score) => win_screen(score),
-            State::InProgress(location, player) => {
-                player.draw();
-                location.draw();
-                draw_input_hint();
-                let (action, target) = get_user_input();
-                if action == Action::Inventory {
-                    player.show_inventory();
-                } else {
-                location
-                    .handle(player, target, action)
-                    .expect("For now, lets assume that it works")
-                }
-            }
-        }
-    }
+fn clear_console() {
+    print!("{}c", 27 as char);
 }
 
-fn lose_screen(score: u32) {
+fn lose_screen(score: i32) {
     color_print::cprintln!(
         "\
 You've <red, bold>lost!</> You scored: <yellow, bold>{}",
@@ -37,7 +18,7 @@ You've <red, bold>lost!</> You scored: <yellow, bold>{}",
     );
 }
 
-fn win_screen(score: u32) {
+fn win_screen(score: i32) {
     color_print::cprintln!(
         "\
 You've <green, bold>won!</> You scored: <yellow, bold>{}",
@@ -58,8 +39,8 @@ fn draw_actions_hint() {
         "\
 Available actions: <cyan, bold>
 attack
-take
 throw
+equip
 eat
 enter"
     );
@@ -93,7 +74,6 @@ fn parse_input(input: &str) -> Result<(Action, i32), String> {
     let mut tokens = input.split_ascii_whitespace();
     match tokens.next() {
         Some("help") => Ok((Action::Help, 0)),
-        Some("inventory") => Ok((Action::Inventory, 0)),
         Some(token) => {
             let action = action_of_str(token)?;
             let id: i32 = match tokens.next() {
@@ -113,13 +93,11 @@ fn parse_input(input: &str) -> Result<(Action, i32), String> {
 fn action_of_str(s: &str) -> Result<Action, String> {
     match s {
         "attack" => Ok(Action::Attack),
-        "inventory" => Ok(Action::Inventory),
-        "back" => Ok(Action::Back),
+        "equip" => Ok(Action::Equip),
+        "throw" => Ok(Action::Throw),
         "eat" => Ok(Action::Eat),
         "enter" => Ok(Action::Enter),
         "help" => Ok(Action::Help),
-        "take" => Ok(Action::Take),
-        "throw" => Ok(Action::Throw),
         _ => Err(color_print::cformat!("Unknown action: <red, bold>{}</>", s)),
     }
 }
@@ -132,8 +110,8 @@ mod tests {
     fn parse_test() {
         assert_eq!(parse_input("attack 4").unwrap(), (Action::Attack, 4));
         assert_eq!(
-            parse_input("wtf").unwrap_err(),
-            color_print::cformat!("Unknown action: <red, bold>wtf</>")
+            parse_input("test").unwrap_err(),
+            color_print::cformat!("Unknown action: <red, bold>test</>")
         );
     }
 }

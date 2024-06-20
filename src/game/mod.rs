@@ -1,51 +1,77 @@
-mod player;
-
-pub use player::Player;
-mod level;
-pub use level::Level;
-
 pub mod object;
 pub use object::*;
 
+use crate::*;
+
 /// Possible states of the game.
-pub enum State<'a> {
-    Lost(u32),
-    Won(u32),
-    InProgress(&'a mut Level, &'a mut Player),
+pub enum GameState {
+    Lost(i32),
+    Won(i32),
+    InProgress,
 }
 
 /// Struct `Game` is responsible for keeping track of the game state.
 ///
 /// It holds reference to the player and the level he's in.
 pub struct Game {
-    player: Player,
-    level: Box<Level>,
-    score: u32,
+    player: Box<Player>,
 }
 
 impl Game {
-    pub fn new(player: Player, level: Box<Level>) -> Self {
+    /// Create an instance of a `Game`.
+    pub fn new(player: Box<Player>) -> Self {
         Self {
             player,
-            level,
-            score: 0,
         }
     }
 
-    /// Returns the state of the game, depending wheter player is still alive or not.
-    pub fn get_state(&mut self) -> State {
+    /// Runs the main loop
+    pub fn run_loop(&mut self) {
+        clear_console();
+        loop {
+            self.draw();
+            draw_input_hint();
+            let (action, target) = get_user_input();
+            let result = self
+                .handle_input(target, action);
+            
+            let state = match result{
+                Ok(state) => {clear_console(); state},
+                Err(e) => {clear_console(); println!("Error occured: {}.\nPlease try again.\n", e.what()); continue}
+            };
+            match state {
+                GameState::Lost(score) => break lose_screen(score),
+                GameState::Won(score) =>break win_screen(score),
+                GameState::InProgress => ()
+            }
+        }
+    }
+
+    /// Handles player input and returns the resulting `GameState`.
+    pub fn handle_input(&mut self, target: i32, action: Action) -> Result<GameState, GameError>{
+        let location = self.player.get_location();
+
+        // This is the antichrist himself.
+        // I will handle it better, when I get the idea how.
+        // For now, this should do.
+        unsafe {(*location).handle(&mut *(self.player), target, action)?;}
+
         // The player cannot win.
 
         if !self.player.is_alive() {
-            return State::Lost(self.score);
+            return Ok(GameState::Lost(self.player.get_score()));
         }
 
-        State::InProgress(&mut self.level, &mut self.player)
+        Ok(GameState::InProgress)
     }
-}
 
-/// Trait representing a container, that in some way contains `Objects`.
-pub trait Container<T> {
-    /// Add a new object to the container.
-    fn add_child(&mut self, object: Box<T>);
+    /// Draws the game.
+    pub fn draw(&self){
+        self.player.draw();
+        let location = self.player.get_location();
+
+        // :(
+        unsafe {(*location).draw()}
+    }
+
 }
