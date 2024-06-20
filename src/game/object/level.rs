@@ -1,8 +1,6 @@
-use std::ops::Deref;
-
 use crate::{error::GameError, Entity};
 
-use super::{Action, Item, Message, Object, Player};
+use super::{Action, Item, Message, Object};
 
 /// Main container for game objects.
 ///
@@ -47,7 +45,7 @@ Here you can find:",
     /// `target` is the index of targeted object in `content`
     pub fn handle(
         &mut self,
-        mut sender: &mut dyn Entity,
+        sender: &mut dyn Entity,
         target: i32,
         action: Action,
     ) -> Result<(), GameError> {

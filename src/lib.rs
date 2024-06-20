@@ -1,4 +1,5 @@
-///! Exports modules and adds useful utilities
+//! Main library for the engine.
+//! Exports all necessary modules and adds useful utilities
 
 pub mod error;
 pub mod game;

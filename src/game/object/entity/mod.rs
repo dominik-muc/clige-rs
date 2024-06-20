@@ -1,6 +1,8 @@
+//! Defines shared behaviour among all game entities.
+
 use crate::{Level, Weapon};
 
-use super::{Action, Message, Object};
+use super::Object;
 mod enemy;
 mod player;
 pub use enemy::*;

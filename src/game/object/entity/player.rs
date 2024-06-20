@@ -47,7 +47,7 @@ impl Object for Player {
 
     fn handle(
         mut self: Box<Self>,
-        mut sender: &mut dyn Entity,
+        sender: &mut dyn Entity,
         action: Action,
     ) -> Result<Message, GameError> {
         match action {

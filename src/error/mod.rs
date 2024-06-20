@@ -1,3 +1,4 @@
+//! Contains error types.
 
 /// Custom error enum.
 #[derive(Debug, Clone)]

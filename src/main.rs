@@ -1,4 +1,4 @@
-use better_game::*;
+use clige_rs::*;
 
 /// This is a simple game showcasing implemented objects and interactions
 fn main() {

@@ -1,3 +1,5 @@
+//! Main module for everything related to game engine.1
+
 pub mod object;
 pub use object::*;
 

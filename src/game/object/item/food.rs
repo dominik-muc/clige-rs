@@ -1,6 +1,6 @@
 use crate::{error::GameError, Entity};
 
-use super::{Action, Item, Message, Object, Player};
+use super::{Action, Item, Message, Object};
 
 /// Represents different kinds of food in game.
 ///
@@ -19,7 +19,7 @@ impl Food {
 impl Object for Food {
     fn handle(
         self: Box<Self>,
-        mut sender: &mut dyn Entity,
+        sender: &mut dyn Entity,
         action: Action,
     ) -> Result<Message, GameError> {
         match action {

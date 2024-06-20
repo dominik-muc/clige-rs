@@ -16,7 +16,7 @@ impl Door{
 impl Object for Door {
     fn handle(
         self: Box<Self>,
-        mut sender: &mut dyn Entity,
+        _sender: &mut dyn Entity,
         action: Action,
     ) -> Result<Message, GameError> {
         match action {

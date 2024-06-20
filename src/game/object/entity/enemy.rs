@@ -21,7 +21,7 @@ impl Enemy {
 impl Object for Enemy {
     fn handle(
         mut self: Box<Self>,
-        mut sender: &mut dyn Entity,
+        sender: &mut dyn Entity,
         action: Action,
     ) -> Result<Message, GameError> {
         match action {
@@ -75,11 +75,11 @@ impl Entity for Enemy {
         self.weapon = weapon;
     }
 
-    fn change_location(&mut self, location: *mut Level) {
+    fn change_location(&mut self, _location: *mut Level) {
         panic!("NOT IMPLEMENTED")
     }
 
-    fn add_score(&mut self, amount: i32){
+    fn add_score(&mut self, _amount: i32){
         panic!("NOT IMPLEMENTED")
     }
 }

@@ -1,3 +1,5 @@
+//! Module for game objects.
+
 mod entity;
 mod item;
 mod level;

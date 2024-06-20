@@ -1,7 +1,7 @@
 use crate::{error::GameError, Entity};
 use std::fmt::Display;
 
-use super::{Action, Item, Message, Object, Player};
+use super::{Action, Item, Message, Object};
 
 /// Represents different kinds of weapons in game.
 ///
@@ -23,7 +23,7 @@ impl Weapon {
 impl Object for Weapon {
     fn handle(
         self: Box<Self>,
-        mut sender: &mut dyn Entity,
+        _sender: &mut dyn Entity,
         action: Action,
     ) -> Result<Message, GameError> {
         match action {

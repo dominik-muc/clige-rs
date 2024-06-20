@@ -1,4 +1,6 @@
-use super::{Action, Message, Object, Player};
+//! Defines shared behaviour among all game items.
+
+use super::{Action, Message, Object};
 
 mod food;
 mod weapon;
